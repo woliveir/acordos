@@ -1,0 +1,1 @@
+export const HOST_API = 'https://dicor.intranet.bb.com.br/apis/postgrest';
