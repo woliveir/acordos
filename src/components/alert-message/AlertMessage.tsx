@@ -1,35 +1,24 @@
-import React, {useState, useEffect } from 'react';
-import { Alert, AlertProps } from '@mui/material'
+import React, {useState, useEffect, useCallback } from 'react';
+import { Snackbar, Collapse, Alert, AlertProps, AlertTitle } from '@mui/material'
+import { NestCamWiredStandTwoTone, SettingsPower } from '@mui/icons-material';
 
 interface IAlertMessage {
-  show: boolean;
   severity: AlertProps['severity']
   message?: string;
+  onClose?: () => void;
   children?: React.ReactNode; 
   props?: AlertProps;
 };
 
-export const AlertMessage = ( { show = false, message, children, ...props }: IAlertMessage ) => {
-  
-  const [open, setOpen] = useState(show)
-  const handleClose = () => {
-    setOpen(false)
-  }
+export const AlertMessage = ( {  message, children, ...props }: IAlertMessage ) => {
 
-  useEffect( () => {
-    if (open){
-      setTimeout(() => setOpen(false), 6000) // 6 segundos
-    }
-  }, [open])
+  const now =  new Date();
+  const nowPtBr = Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'long', timeZone: 'America/Sao_Paulo' }).format(now);
 
   return (
-    <>
-      {open &&  
-        <Alert variant='filled' onClose={handleClose} {...props}>
-          {message || children}
-        </Alert>
-
-      }
-    </>
+      <Alert variant='filled' {...props}>
+        <AlertTitle><code>{nowPtBr}</code></AlertTitle>
+        <code>{message || children}</code>
+      </Alert>
   )
 }
