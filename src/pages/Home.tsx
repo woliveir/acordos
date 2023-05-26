@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { Link, useAsyncError } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { DefaultLayout } from '../layouts';
-import { VerticalLinearStepper, AlertMessage } from '../components';
-import Message from '../components/alert-message/Message';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import 'dayjs/locale/pt-br';
+
 import { useAxios } from '../hooks/useAxios';
-import { useTimeout } from '../hooks/useTimeout';
-import { DarkMode, DarkModeSharp } from '@mui/icons-material';
+import { AlertMessage } from '../components';
+import { TextField, TextFieldProps } from '@mui/material';
+
 
 interface IProps {
   children: React.ReactNode
@@ -14,6 +18,7 @@ interface IProps {
 export const Home: React.FC<IProps> = ( {children} ) => {
 
     const [ showAlert, setShowAlert ] = useState(false);
+    const [ data, setData ] = useState(null);
 
     interface IAxios {
       url: string;
@@ -33,6 +38,18 @@ export const Home: React.FC<IProps> = ( {children} ) => {
           clearTimeout(timeOut) 
         }, 6000)
     }
+
+  const convertDate = ( value: any ) => {
+    
+    try {
+      return value.toISOString().substring(0,10);
+    } catch (e) {
+      console.log(e);
+    }
+
+    return value
+    
+  }
 
     const handleOnCloseAlert  = () => {
       setShowAlert(false);
@@ -54,9 +71,23 @@ export const Home: React.FC<IProps> = ( {children} ) => {
           <br />
           <button onClick={handleClick}>obter</button>
           <hr />
+          <br />
+          <form>
+            
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
+              <DatePicker
+              onError={(error) => console.log( 'error: ', error)}
+              label='data pt-br'
+              onChange={(value) => setData(value)}
+              value={data}
+              renderInput={ (props: TextFieldProps) => <TextField {...props} value={data} /> }
+              />
+            </LocalizationProvider>
+          </form>
 
           {showAlert && (<AlertMessage severity={alertMessageGet.severityAlert} message={alertMessageGet.messageAlert} onClose={handleOnCloseAlert} />)}
           {JSON.stringify(dataGet)}
+          {data && convertDate(data)?.toString()}
       </DefaultLayout>
     );
 
